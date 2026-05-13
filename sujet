@@ -1,0 +1,1328 @@
+# Explication complète du projet — Système RH interne (CodeIgniter 4)
+
+Le projet est un **mini système de gestion de congés** développé avec **CodeIgniter 4**.
+
+L’objectif :
+
+* un employé demande un congé,
+* le RH valide ou refuse,
+* le système met automatiquement à jour les soldes,
+* l’admin gère toute la plateforme.
+
+Le professeur insiste surtout sur :
+
+* la structure CI4 propre,
+* les rôles,
+* les sessions,
+* les validations,
+* les migrations/seeder,
+* le calcul des jours,
+* le respect du workflow.
+
+---
+
+# 1. Architecture générale du système
+
+Il y a **3 rôles** :
+
+| Rôle    | Description        |
+| ------- | ------------------ |
+| employe | utilisateur normal |
+| rh      | responsable RH     |
+| admin   | administrateur     |
+
+---
+
+# 2. Fonctionnalités par rôle
+
+# Employé
+
+L’employé peut :
+
+### Obligatoire
+
+* se connecter / déconnecter
+* soumettre une demande de congé
+* voir ses demandes
+* voir le statut :
+
+  * en attente
+  * approuvé
+  * refusé
+* voir son solde restant
+* annuler une demande en attente
+
+### Bonus
+
+* modifier son profil
+
+---
+
+# RH
+
+Le RH peut :
+
+### Obligatoire
+
+* voir toutes les demandes en attente
+* approuver une demande
+* refuser une demande
+* mettre à jour automatiquement le solde après approbation
+
+### Important
+
+Quand le RH approuve :
+
+* le système doit déduire automatiquement le nombre de jours du solde employé
+
+---
+
+# Admin
+
+L’admin peut :
+
+### Obligatoire
+
+* CRUD employés
+* CRUD départements
+* CRUD types de congé
+* tableau de bord absences
+
+### Très important
+
+L’admin peut :
+
+* ajuster/initialiser les soldes
+
+---
+
+# 3. Base de données probable
+
+Tu dois quasiment avoir ces tables :
+
+---
+
+## users
+
+Authentification.
+
+| colonne        | type                  |
+| -------------- | --------------------- |
+| id             | int                   |
+| nom            | varchar               |
+| email          | varchar               |
+| password       | varchar               |
+| role           | enum/admin/rh/employe |
+| departement_id | FK                    |
+| actif          | bool                  |
+
+---
+
+## departements
+
+| colonne |
+| ------- |
+| id      |
+| nom     |
+
+---
+
+## types_conge
+
+Exemple :
+
+* annuel
+* maladie
+* exceptionnel
+
+| colonne      |
+| ------------ |
+| id           |
+| libelle      |
+| nb_jours_max |
+
+---
+
+## soldes
+
+Solde de chaque employé.
+
+| colonne        |
+| -------------- |
+| id             |
+| user_id        |
+| type_conge_id  |
+| jours_restants |
+
+---
+
+## demandes_conge
+
+La table principale.
+
+| colonne        |
+| -------------- |
+| id             |
+| user_id        |
+| type_conge_id  |
+| date_debut     |
+| date_fin       |
+| motif          |
+| statut         |
+| commentaire_rh |
+| nb_jours       |
+| created_at     |
+
+---
+
+# 4. Workflow exact du système
+
+# Étape 1 — Connexion
+
+L’utilisateur se connecte.
+
+Le système :
+
+* vérifie email/password
+* crée une session
+* redirige selon le rôle
+
+Exemple :
+
+```php
+if($user['role'] == 'admin')
+```
+
+---
+
+# Étape 2 — Employé soumet demande
+
+Formulaire :
+
+* type de congé
+* date début
+* date fin
+* motif
+
+Le système calcule :
+
+* nb jours
+
+Puis vérifie :
+
+* solde suffisant
+* pas de chevauchement
+* date valide
+
+Puis :
+
+* enregistre demande = "en_attente"
+
+---
+
+# Étape 3 — RH traite
+
+RH voit liste des demandes.
+
+Il peut :
+
+* approuver
+* refuser
+
+Si approuvé :
+
+* statut = approuve
+* solde -= nb_jours
+
+Si refusé :
+
+* statut = refuse
+
+---
+
+# Étape 4 — Admin supervise
+
+Dashboard :
+
+* absences du mois
+* statistiques
+* employés
+* départements
+* types congé
+
+---
+
+# 5. Partie la PLUS IMPORTANTE : calcul des jours
+
+Le sujet insiste dessus.
+
+Tu dois calculer les jours ouvrables.
+
+Donc :
+
+* exclure samedi
+* exclure dimanche
+
+Exemple :
+
+| Début | Fin      |
+| ----- | -------- |
+| lundi | vendredi |
+
+= 5 jours
+
+---
+
+## Ce qu’il faut vérifier ABSOLUMENT
+
+### date_debut < date_fin
+
+Sinon erreur.
+
+---
+
+### Solde suffisant
+
+Exemple :
+
+solde = 5 jours
+
+demande = 7 jours
+
+=> refus automatique.
+
+---
+
+### Pas de chevauchement
+
+Un employé ne peut pas avoir :
+
+* 2 demandes approuvées
+* sur les mêmes dates
+
+Exemple interdit :
+
+| Demande 1       |
+| --------------- |
+| 10 mai → 15 mai |
+
+et
+
+| Demande 2       |
+| --------------- |
+| 12 mai → 18 mai |
+
+---
+
+# 6. Authentification : très important
+
+Le prof insiste dessus.
+
+Tu dois utiliser :
+
+```php
+password_hash()
+password_verify()
+```
+
+PAS :
+
+* md5
+* sha1
+
+---
+
+# 7. AuthFilter CI4
+
+Très important.
+
+Tu dois protéger les routes.
+
+Exemple :
+
+```php
+'employe/*' => ['filter' => 'auth:employe']
+```
+
+---
+
+# 8. Ce qu’il NE FAUT PAS oublier
+
+# A. Sessions
+
+Utiliser :
+
+```php
+session()
+```
+
+Après login :
+
+```php
+session()->set(...)
+```
+
+---
+
+# B. Flashdata
+
+Pour messages :
+
+```php
+session()->setFlashdata('success', 'Demande envoyée');
+```
+
+---
+
+# C. CSRF
+
+Le sujet dit :
+
+> CSRF activé sur tous les formulaires POST
+
+Donc dans `.env` :
+
+```env
+security.csrfProtection = true
+```
+
+Et dans formulaires :
+
+```php
+<?= csrf_field() ?>
+```
+
+---
+
+# D. Pattern PRG
+
+Post Redirect Get.
+
+Après insertion :
+
+```php
+return redirect()->to('/demandes');
+```
+
+PAS :
+
+```php
+return view(...)
+```
+
+après POST.
+
+---
+
+# E. Query Builder uniquement
+
+Le sujet interdit SQL brut.
+
+Donc :
+
+✅
+
+```php
+$model->where(...)
+```
+
+❌
+
+```php
+$db->query("SELECT ...");
+```
+
+---
+
+# F. Aucun JavaScript métier
+
+Le sujet précise :
+
+> tout côté serveur
+
+Donc :
+
+* validations en PHP
+* calculs en PHP
+
+Tu peux utiliser JS seulement pour esthétique.
+
+---
+
+# 9. Structure CI4 à respecter
+
+Très important pour la note.
+
+---
+
+## Controllers
+
+Exemples :
+
+```bash
+app/Controllers/AuthController.php
+app/Controllers/EmployeController.php
+app/Controllers/RHController.php
+app/Controllers/AdminController.php
+```
+
+---
+
+## Models
+
+Un modèle par table.
+
+```bash
+UserModel.php
+DemandeCongeModel.php
+SoldeModel.php
+```
+
+---
+
+## Views
+
+```bash
+views/auth/
+views/employe/
+views/rh/
+views/admin/
+views/layout/
+```
+
+---
+
+# 10. Seeder obligatoire
+
+Le sujet le demande.
+
+Tu dois créer :
+
+* 1 admin
+* 2 employés
+* 3 types congé
+
+Exemple :
+
+```bash
+php spark db:seed DatabaseSeeder
+```
+
+---
+
+# 11. Ce que le prof va probablement tester
+
+# Très probable
+
+## Login
+
+* mauvais mot de passe
+* session
+
+---
+
+## Protection des routes
+
+Tester :
+
+```url
+/admin
+```
+
+avec employé connecté.
+
+---
+
+## Calcul des jours
+
+Tester :
+
+* week-end
+* dates invalides
+
+---
+
+## Solde
+
+Tester :
+
+* dépassement solde
+
+---
+
+## Workflow
+
+Tester :
+
+* demande
+* approbation RH
+* diminution solde
+
+---
+
+## Migration
+
+Le prof va sûrement faire :
+
+```bash
+php spark migrate
+php spark db:seed DatabaseSeeder
+```
+
+Donc :
+
+* migrations propres
+* seeder fonctionnel
+
+---
+
+# 12. Les erreurs fréquentes à éviter
+
+# Erreur 1
+
+Ne pas séparer les rôles.
+
+---
+
+# Erreur 2
+
+Mot de passe non hashé.
+
+---
+
+# Erreur 3
+
+Pas de filtre auth.
+
+---
+
+# Erreur 4
+
+Routes accessibles sans login.
+
+---
+
+# Erreur 5
+
+Pas de validation serveur.
+
+---
+
+# Erreur 6
+
+Solde négatif possible.
+
+---
+
+# Erreur 7
+
+Chevauchement non bloqué.
+
+---
+
+# Erreur 8
+
+SQL brut.
+
+---
+
+# 13. Version MINIMALE pour avoir une bonne note
+
+Si le temps est court :
+
+## Priorité absolue
+
+### Auth
+
+* login/logout
+* sessions
+* rôles
+
+### Employé
+
+* créer demande
+* voir demandes
+* voir solde
+
+### RH
+
+* approuver/refuser
+
+### Admin
+
+* CRUD employés
+* CRUD types congé
+
+### Système
+
+* calcul jours
+* mise à jour solde
+
+---
+
+# 14. Ce que je te conseille techniquement
+
+Utilise :
+
+* CodeIgniter 4
+* Query Builder
+* Migrations
+* Seeder
+* Filters
+* Layout unique
+* Bootstrap simple
+
+---
+
+# 15. Organisation recommandée du binôme
+
+## Personne 1
+
+* auth
+* filters
+* sessions
+* employé
+
+## Personne 2
+
+* RH
+* admin
+* dashboard
+* soldes
+
+---
+
+# 16. Dernier point critique
+
+Le cœur du projet est :
+
+```text
+Demande -> Validation RH -> Mise à jour solde
+```
+Non, il reste plusieurs détails importants implicites dans le sujet que tu dois comprendre pour éviter les erreurs de conception. Voici les points supplémentaires vraiment importants.
+
+---
+
+# 17. La logique métier exacte du solde
+
+Le sujet parle de :
+
+> “solde calculé”
+
+Ça veut dire que le système doit gérer les jours restants intelligemment.
+
+---
+
+## Structure correcte du solde
+
+Tu ne dois PAS stocker uniquement :
+
+```text
+user_id | jours_restants
+```
+
+Parce qu’un employé peut avoir plusieurs types de congé.
+
+Il faut plutôt :
+
+| user_id | type_conge_id | solde |
+| ------- | ------------- | ----- |
+| 1       | annuel        | 20    |
+| 1       | maladie       | 10    |
+
+Sinon :
+
+* impossible de gérer plusieurs congés proprement.
+
+---
+
+# 18. Le calcul doit être fait AVANT insertion
+
+Quand l’employé soumet :
+
+Le système doit :
+
+1. calculer nb jours
+2. vérifier solde
+3. vérifier chevauchement
+4. seulement ensuite enregistrer
+
+Pas l’inverse.
+
+---
+
+# 19. Le statut doit être normalisé
+
+Ne mets pas :
+
+```text
+"oui"
+"non"
+```
+
+ou
+
+```text
+1
+2
+```
+
+Utilise plutôt :
+
+```text
+en_attente
+approuve
+refuse
+annule
+```
+
+C’est beaucoup plus propre.
+
+---
+
+# 20. L’annulation doit être sécurisée
+
+Le sujet dit :
+
+> l’employé peut annuler une demande en attente
+
+Donc :
+
+✅ autorisé :
+
+```text
+statut = en_attente
+```
+
+❌ interdit :
+
+```text
+approuve
+refuse
+```
+
+Sinon :
+
+* un employé pourrait annuler après validation RH.
+
+---
+
+# 21. Le RH ne doit voir que son périmètre
+
+Le sujet mentionne :
+
+> filtrer par département
+
+Donc probablement :
+
+Un RH :
+
+* voit seulement les employés de son département.
+
+Exemple :
+
+RH informatique :
+
+* voit seulement employés informatique.
+
+---
+
+# 22. Le dashboard admin probable
+
+Même si le sujet ne détaille pas trop :
+
+Le dashboard doit probablement afficher :
+
+* nombre employés
+* demandes en attente
+* demandes approuvées
+* absences du mois
+* employés absents aujourd’hui
+
+Même simple.
+
+---
+
+# 23. Soft delete conseillé
+
+Pour employés/types congé.
+
+Au lieu de supprimer :
+
+```php
+DELETE FROM users
+```
+
+Tu peux :
+
+```text
+actif = 0
+```
+
+Le sujet mentionne :
+
+> désactiver employé
+
+Donc attention :
+
+* probablement PAS suppression physique.
+
+---
+
+# 24. Les règles de validation CI4
+
+Très important pour la note.
+
+Tu dois utiliser :
+
+```php
+$this->validate([
+   'email' => 'required|valid_email',
+]);
+```
+
+Pas des if manuels partout.
+
+---
+
+# 25. Validation critique des dates
+
+Tu dois probablement vérifier :
+
+---
+
+## A. date début passée ?
+
+Exemple :
+
+* demande rétroactive interdite
+
+---
+
+## B. même jour
+
+Si :
+
+```text
+date_debut == date_fin
+```
+
+Alors :
+
+* 1 jour ouvrable
+* pas 0
+
+---
+
+## C. week-end seul
+
+Exemple :
+
+```text
+samedi -> dimanche
+```
+
+Résultat :
+
+```text
+0 jour ouvrable
+```
+
+Donc :
+
+* demande invalide.
+
+---
+
+# 26. Le calcul des jours ouvrables est LE piège principal
+
+Le prof insiste dessus.
+
+Tu dois comprendre :
+
+---
+
+## Exemple 1
+
+| début | fin      |
+| ----- | -------- |
+| lundi | vendredi |
+
+= 5 jours
+
+---
+
+## Exemple 2
+
+| début    | fin   |
+| -------- | ----- |
+| vendredi | lundi |
+
+= 2 jours
+
+vendredi + lundi
+
+---
+
+## Exemple 3
+
+| début  | fin      |
+| ------ | -------- |
+| samedi | dimanche |
+
+= 0
+
+interdit.
+
+---
+
+# 27. Carbon OU DateTime
+
+Le sujet mentionne :
+
+> Carbon ou date_diff()
+
+Mais CI4 utilise souvent :
+
+```php
+Time::parse()
+```
+
+ou PHP natif :
+
+```php
+DateTime
+DatePeriod
+```
+
+Donc :
+
+* Carbon pas obligatoire.
+
+---
+
+# 28. Les migrations doivent être dans l’ordre
+
+Le sujet le dit explicitement.
+
+Pourquoi ?
+
+Parce que :
+
+* foreign keys.
+
+Ordre logique :
+
+```text
+departements
+types_conge
+users
+soldes
+demandes_conge
+```
+
+Sinon :
+
+* erreur SQL FK.
+
+---
+
+# 29. Les clés étrangères sont importantes
+
+Tu dois probablement mettre :
+
+```php
+->addForeignKey()
+```
+
+Exemple :
+
+```php
+$this->forge->addForeignKey('user_id', 'users', 'id');
+```
+
+Le prof peut vérifier ça.
+
+---
+
+# 30. Le layout partagé
+
+Le sujet mentionne :
+
+> layout partagé
+
+Donc :
+
+Ne répète pas :
+
+* navbar
+* sidebar
+* header
+
+dans chaque page.
+
+Utilise :
+
+```php
+<?= $this->extend('layouts/app') ?>
+```
+
+et
+
+```php
+<?= $this->section('content') ?>
+```
+
+---
+
+# 31. Sidebar selon rôle
+
+Très important.
+
+Employé :
+
+* menu employé seulement
+
+RH :
+
+* menu RH
+
+Admin :
+
+* menu admin
+
+---
+
+# 32. Les routes doivent être propres
+
+Exemple :
+
+```php
+/employe/demandes
+/rh/demandes
+/admin/employes
+```
+
+Pas :
+
+```php
+/page1
+/page2
+```
+
+---
+
+# 33. Les filtres sont probablement notés
+
+Tu dois créer :
+
+```bash
+app/Filters/AuthFilter.php
+```
+
+et peut-être :
+
+```php
+RoleFilter
+```
+
+---
+
+# 34. Le prof peut tester l’accès URL direct
+
+Exemple :
+
+Employé tape :
+
+```url
+/admin/employes
+```
+
+Le système doit :
+
+* bloquer
+* rediriger.
+
+---
+
+# 35. La sécurité oubliée par beaucoup
+
+Quand tu modifies/supprimes une demande :
+
+Tu dois vérifier :
+
+```php
+demande.user_id == session user
+```
+
+Sinon :
+
+* un employé peut modifier demande autre employé.
+
+---
+
+# 36. Attention aux doubles validations RH
+
+Important.
+
+Si RH clique deux fois :
+
+Le solde ne doit PAS être retiré deux fois.
+
+Donc :
+
+* vérifier statut avant update.
+
+---
+
+# 37. Transactions SQL recommandées
+
+Très important pour cohérence.
+
+Quand RH approuve :
+
+Il faut :
+
+1. update demande
+2. update solde
+
+dans une transaction.
+
+Sinon :
+
+* bug possible.
+
+---
+
+## Exemple
+
+```php
+$db->transStart();
+
+...
+
+$db->transComplete();
+```
+
+---
+
+# 38. Ce qui est probablement BONUS
+
+Tu peux l’ajouter si temps :
+
+* pagination
+* recherche
+* upload justificatif
+* notifications
+* calendrier
+* statistiques graphiques
+
+Mais :
+
+* pas prioritaire.
+
+---
+
+# 39. Ce que le prof veut vraiment évaluer
+
+Pas le design.
+
+Mais :
+
+* architecture CI4
+* logique métier
+* sécurité
+* organisation
+* validations
+* workflow
+
+---
+
+# 40. Le cœur technique réel du projet
+
+Le vrai moteur du projet est :
+
+```text
+AUTH
+→ FILTERS
+→ DEMANDE
+→ VALIDATION RH
+→ UPDATE SOLDE
+→ CONTRÔLES MÉTIER
+```
+
+Si ces éléments sont solides :
+
+* le projet est réussi même avec UI simple.
+
+---
+
+# 41. Ce qu’il ne faut surtout pas faire
+
+❌ Tout dans un seul controller
+
+❌ SQL brut partout
+
+❌ Pas de validations
+
+❌ Pas de filtres
+
+❌ Routes ouvertes
+
+❌ Mot de passe non hashé
+
+❌ HTML copié partout
+
+❌ Solde modifié côté client
+
+❌ JavaScript qui décide des validations métier
+
+---
+
+# 42. La version idéale finale
+
+Le projet idéal contient :
+
+## Auth
+
+* login/logout/session
+
+## Employé
+
+* soumettre
+* annuler
+* voir historique
+* voir solde
+
+## RH
+
+* approuver/refuser
+* commentaire
+* filtre
+
+## Admin
+
+* CRUD
+* dashboard
+* soldes
+
+## Technique
+
+* migrations
+* seeder
+* filters
+* validation
+* flashdata
+* PRG
+* CSRF
+* Query Builder
+
+---
+
+
+* technique,
+* architecture,
+* logique métier,
+* sécurité,
+* pièges,
+* attentes probables du prof.

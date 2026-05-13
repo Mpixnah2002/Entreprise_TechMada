@@ -1,0 +1,332 @@
+# TODO LIST — Système RH Interne (CodeIgniter 4)
+
+# 1. Initialisation du projet
+
+* [ok] Créer projet CodeIgniter 4
+* [ok] Configurer `.env`
+* [ok] Configurer connexion base de données
+* [ ] Tester serveur :
+
+```bash
+php spark serve
+```
+
+---
+
+# 2. Création de la base de données
+
+# Migrations
+
+* [ ] Créer migration `departements`
+* [ ] Créer migration `types_conge`
+* [ ] Créer migration `users`
+* [ ] Créer migration `soldes`
+* [ ] Créer migration `demandes_conge`
+
+---
+
+# Relations / Foreign Keys
+
+* [ ] `users.departement_id -> departements.id`
+* [ ] `soldes.user_id -> users.id`
+* [ ] `soldes.type_conge_id -> types_conge.id`
+* [ ] `demandes_conge.user_id -> users.id`
+* [ ] `demandes_conge.type_conge_id -> types_conge.id`
+
+---
+
+# Exécution migrations
+
+* [ ] Tester :
+
+```bash
+php spark migrate
+```
+
+---
+
+# 3. Seeder
+
+* [ ] Créer admin par défaut
+* [ ] Créer 1 RH
+* [ ] Créer 2 employés
+* [ ] Créer départements
+* [ ] Créer 3 types de congé
+* [ ] Initialiser soldes employés
+
+---
+
+# Test seeder
+
+* [ ] Tester :
+
+```bash
+php spark db:seed DatabaseSeeder
+```
+
+---
+
+# 4. Models
+
+* [ ] `UserModel`
+* [ ] `DepartementModel`
+* [ ] `TypeCongeModel`
+* [ ] `SoldeModel`
+* [ ] `DemandeCongeModel`
+
+---
+
+# 5. Authentification
+
+# Login
+
+* [ ] Créer formulaire login
+* [ ] Vérifier email
+* [ ] Vérifier mot de passe avec `password_verify`
+* [ ] Créer session utilisateur
+* [ ] Redirection selon rôle
+
+---
+
+# Logout
+
+* [ ] Détruire session
+* [ ] Retour page login
+
+---
+
+# Sécurité
+
+* [ ] Utiliser `password_hash`
+* [ ] Activer CSRF
+* [ ] Ajouter `csrf_field()` dans formulaires
+
+---
+
+# 6. Filters & routes protégées
+
+* [ ] Créer `AuthFilter`
+* [ ] Bloquer accès sans connexion
+* [ ] Bloquer accès mauvais rôle
+
+---
+
+# Routes
+
+* [ ] Routes employé
+* [ ] Routes RH
+* [ ] Routes admin
+
+---
+
+# Test sécurité
+
+* [ ] Employé ne peut pas accéder `/admin`
+* [ ] RH ne peut pas accéder admin
+* [ ] Utilisateur non connecté bloqué
+
+---
+
+# 7. Layout partagé
+
+* [ ] Créer layout principal
+* [ ] Navbar commune
+* [ ] Sidebar selon rôle
+* [ ] Messages flashdata
+
+---
+
+# 8. Fonctionnalités Employé
+
+# Demande congé
+
+* [ ] Formulaire demande
+* [ ] Choix type congé
+* [ ] Date début
+* [ ] Date fin
+* [ ] Motif
+
+---
+
+# Validations
+
+* [ ] Vérifier champs obligatoires
+* [ ] Vérifier date début < date fin
+* [ ] Vérifier jours ouvrables > 0
+* [ ] Vérifier solde suffisant
+* [ ] Vérifier chevauchement
+
+---
+
+# Calcul jours
+
+* [ ] Exclure samedi
+* [ ] Exclure dimanche
+* [ ] Calculer `nb_jours`
+
+---
+
+# Historique
+
+* [ ] Voir ses demandes
+* [ ] Voir statut :
+
+  * en attente
+  * approuvé
+  * refusé
+  * annulé
+
+---
+
+# Solde
+
+* [ ] Afficher solde restant par type
+
+---
+
+# Annulation
+
+* [ ] Autoriser seulement si `en_attente`
+
+---
+
+# 9. Fonctionnalités RH
+
+# Gestion demandes
+
+* [ ] Voir demandes en attente
+* [ ] Filtrer par département
+* [ ] Filtrer par statut
+
+---
+
+# Validation RH
+
+* [ ] Bouton approuver
+* [ ] Bouton refuser
+* [ ] Commentaire optionnel
+
+---
+
+# Mise à jour solde
+
+* [ ] Déduire automatiquement jours
+* [ ] Empêcher double validation
+* [ ] Utiliser transaction SQL
+
+---
+
+# 10. Fonctionnalités Admin
+
+# CRUD employés
+
+* [ ] Ajouter employé
+* [ ] Modifier employé
+* [ ] Désactiver employé
+
+---
+
+# CRUD départements
+
+* [ ] Ajouter
+* [ ] Modifier
+* [ ] Supprimer/désactiver
+
+---
+
+# CRUD types congé
+
+* [ ] Ajouter
+* [ ] Modifier
+* [ ] Supprimer/désactiver
+
+---
+
+# Soldes
+
+* [ ] Initialiser soldes
+* [ ] Modifier soldes employés
+
+---
+
+# Dashboard
+
+* [ ] Nombre employés
+* [ ] Demandes en attente
+* [ ] Absences du mois
+
+---
+
+# 11. Validation & sécurité finale
+
+* [ ] Toutes routes protégées
+* [ ] Toutes actions vérifiées côté serveur
+* [ ] Aucun SQL brut
+* [ ] Query Builder uniquement
+* [ ] Aucun mot de passe en clair
+* [ ] Vérifier permissions utilisateur
+
+---
+
+# 12. UX minimale
+
+* [ ] Messages succès
+* [ ] Messages erreur
+* [ ] Redirections propres (PRG)
+
+---
+
+# 13. Tests importants
+
+* [ ] Login incorrect
+* [ ] Solde insuffisant
+* [ ] Chevauchement dates
+* [ ] Week-end uniquement
+* [ ] Validation RH
+* [ ] Mise à jour solde
+* [ ] Protection URL directe
+
+---
+
+# 14. Finalisation
+
+* [ ] Nettoyer code
+* [ ] Vérifier structure CI4
+* [ ] Ajouter commentaires utiles
+* [ ] Vérifier migrations propres
+* [ ] Vérifier seeder propre
+
+---
+
+# 15. README
+
+* [ ] Installation
+* [ ] Configuration DB
+* [ ] Commandes migrate
+* [ ] Commandes seed
+* [ ] Comptes test
+
+---
+
+# Comptes test README
+
+## Admin
+
+```text
+email: admin@test.com
+password: admin123
+```
+
+## RH
+
+```text
+email: rh@test.com
+password: rh123
+```
+
+## Employé
+
+```text
+email: employe@test.com
+password: emp123
+```
