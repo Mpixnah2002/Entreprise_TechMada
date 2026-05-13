@@ -34,7 +34,7 @@
 [ok] Tester : php spark migrate
 
 ===============================================================================
-# 3. MODELS (PARTAGÉ)
+# 3. MODELS (PARTAGÉ) (ok)
 ===============================================================================
 
 [ok] UserModel / EmployeModel
@@ -57,15 +57,15 @@
 [ok] Tester : php spark db:seed DatabaseSeeder
 
 ===============================================================================
-# 5. AUTHENTIFICATION - LOGIN (TSIKY)
+# 5. AUTHENTIFICATION - LOGIN (TSIKY) (ok)
 ===============================================================================
 
-[ ] Créer formulaire login (view)
-[ ] Vérifier email en base
-[ ] Vérifier mot de passe (password_verify)
-[ ] Créer session utilisateur (id, role, email, nom)
-[ ] Redirection selon rôle (employee/rh/admin)
-[ ] Gestion erreurs (flashdata)
+[ok] Créer formulaire login (view)
+[ok] Vérifier email en base
+[ok] Vérifier mot de passe (password_verify)
+[ok] Créer session utilisateur (id, role, email, nom)
+[ok] Redirection selon rôle (employee/rh/admin)
+[ok] Gestion erreurs (flashdata)
 
 ===============================================================================
 # 6. AUTHENTIFICATION - LOGOUT (TSIKY)
