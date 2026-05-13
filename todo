@@ -36,8 +36,8 @@
 ===============================================================================
 
 [ ] UserModel
-[ ] DepartementModel (TOI)
-[ ] TypeCongeModel (TOI)
+[ ] DepartementModel (ALEXIA)
+[ ] TypeCongeModel (ALEXIA)
 [ ] SoldeModel
 [ ] DemandeCongeModel
 
@@ -112,7 +112,7 @@
 [ ] Soumettre (POST -> store())
 
 ## 10b. Validations côté serveur
-[ ] Vérifier champs obligatoires
+[ ] Vérifier champs obligaALEXIAres
 [ ] Vérifier date début < date fin
 [ ] Vérifier nb jours > 0
 [ ] Vérifier solde suffisant (consulter soldes)
@@ -151,7 +151,7 @@
 [ ] Protection URL directe (non connecté)
 
 ===============================================================================
-# 12. FONCTIONNALITÉS RH (TOI - 100%)
+# 12. FONCTIONNALITÉS RH (ALEXIA - 100%)
 ===============================================================================
 
 ## 12a. Liste des demandes à traiter
@@ -191,7 +191,7 @@
 [ ] Nb employés dans son département
 
 ===============================================================================
-# 13. FONCTIONNALITÉS ADMIN (TOI - 100%)
+# 13. FONCTIONNALITÉS ADMIN (ALEXIA - 100%)
 ===============================================================================
 
 ## 13a. CRUD Employés
@@ -223,7 +223,7 @@
 [ ] Graphique simple (optionnel)
 
 ===============================================================================
-# 14. SÉCURITÉ RH/ADMIN (TOI)
+# 14. SÉCURITÉ RH/ADMIN (ALEXIA)
 ===============================================================================
 
 [ ] Vérifier rôle = rh avant toute action RH
@@ -305,7 +305,7 @@ TSIKY (Login + Utilisateur) :
     - Historique + annulation
     - Tests utilisateur
 
-TOI (RH + Admin) :
+ALEXIA (RH + Admin) :
     - Dashboard RH
     - Liste demandes en attente
     - Approuver/refuser + transaction solde
