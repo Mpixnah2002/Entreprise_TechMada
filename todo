@@ -3,55 +3,58 @@
 ===============================================================================
 
 ===============================================================================
-# 1. INITIALISATION DU PROJET (PARTAGÉ)
+# 1. INITIALISATION DU PROJET (ok)
 ===============================================================================
 
 [ok] Créer projet CodeIgniter 4
 [ok] Configurer .env (SQLite)
 [ok] Configurer connexion base de données (Database.php)
-[ ] Tester : php spark serve
+[ok] Tester : php spark serve
+[ok] Créer dossier writable/database/
+[ok] Créer fichier techmada_rh.sqlite dans writable/database/
 
 ===============================================================================
-# 2. MIGRATIONS (PARTAGÉ)
+# 2. MIGRATIONS (ok)
 ===============================================================================
 
-[ ] Migration departements
-[ ] Migration types_conge
-[ ] Migration users
-[ ] Migration soldes
-[ ] Migration demandes_conge
+[ok] Migration departements
+[ok] Migration types_conge
+[ok] Migration employes
+[ok] Migration soldes
+[ok] Migration conges
 
-# FOREIGN KEYS
-[ ] users.departement_id -> departements.id
-[ ] soldes.user_id -> users.id
-[ ] soldes.type_conge_id -> types_conge.id
-[ ] demandes_conge.user_id -> users.id
-[ ] demandes_conge.type_conge_id -> types_conge.id
+# FOREIGN KEYS (ok)
+[ok] employes.departement_id -> departements.id
+[ok] soldes.employe_id -> employes.id
+[ok] soldes.type_conge_id -> types_conge.id
+[ok] conges.employe_id -> employes.id
+[ok] conges.type_conge_id -> types_conge.id
 
-# EXECUTION
-[ ] Tester : php spark migrate
+# EXECUTION (ok)
+[ok] Tester : php spark migrate
 
 ===============================================================================
 # 3. MODELS (PARTAGÉ)
 ===============================================================================
 
-[ ] UserModel
-[ ] DepartementModel (ALEXIA)
-[ ] TypeCongeModel (ALEXIA)
-[ ] SoldeModel
-[ ] DemandeCongeModel
+[ok] UserModel / EmployeModel
+[ok] DepartementModel (ALEXIA)
+[ok] TypeCongeModel (ALEXIA)
+[ok] SoldeModel
+[ok] DemandeCongeModel / CongeModel
 
 ===============================================================================
-# 4. SEEDER (PARTAGÉ)
+# 4. SEEDER (ok)
 ===============================================================================
 
-[ ] Créer admin par défaut
-[ ] Créer 1 RH
-[ ] Créer 2 employés
-[ ] Créer départements
-[ ] Créer 3 types de congé
-[ ] Initialiser soldes employés
-[ ] Tester : php spark db:seed DatabaseSeeder
+[ok] Créer admin par défaut
+[ok] Créer 1 RH
+[ok] Créer 2 employés
+[ok] Créer départements
+[ok] Créer 4 types de congé (annuel, maladie, spécial, sans solde)
+[ok] Initialiser soldes employés
+[ok] Créer quelques demandes de congé (en_attente, approuvee, refusee, annulee)
+[ok] Tester : php spark db:seed DatabaseSeeder
 
 ===============================================================================
 # 5. AUTHENTIFICATION - LOGIN (TSIKY)
@@ -112,7 +115,7 @@
 [ ] Soumettre (POST -> store())
 
 ## 10b. Validations côté serveur
-[ ] Vérifier champs obligaALEXIAres
+[ ] Vérifier champs obligatoires
 [ ] Vérifier date début < date fin
 [ ] Vérifier nb jours > 0
 [ ] Vérifier solde suffisant (consulter soldes)
@@ -271,9 +274,9 @@
 ===============================================================================
 
 [ ] Code source complet (structure CI4)
-[ ] Fichier SQLite (.db) dans writable/
-[ ] Migrations fonctionnelles
-[ ] Seeder fonctionnel
+[ok] Fichier SQLite (.db) dans writable/database/techmada_rh.sqlite
+[ok] Migrations fonctionnelles
+[ok] Seeder fonctionnel
 [ ] README + TODOLIST à jour
 
 ===============================================================================
@@ -288,8 +291,12 @@ RH :
     Email : rh@techmada.mg
     Mot de passe : rh123
 
-EMPLOYÉ :
-    Email : employe@techmada.mg
+EMPLOYÉ 1 :
+    Email : soa.rakoto@techmada.mg
+    Mot de passe : emp123
+
+EMPLOYÉ 2 :
+    Email : tsiry.fidy@techmada.mg
     Mot de passe : emp123
 
 ===============================================================================
@@ -316,8 +323,13 @@ ALEXIA (RH + Admin) :
     - Gestion soldes
     - Tests RH/Admin
 
+ALEXIA (Déjà fait ✅) :
+    ✅ Migrations (5 tables)
+    ✅ Clés étrangères
+    ✅ Seeder complet
+    ✅ Base SQLite créée
+
 ENSEMBLE :
-    - Migrations + Seeder
     - Routes + AuthFilter
     - CSRF + Sécurité
     - Tests intégration
@@ -343,7 +355,7 @@ Lancer le seeder :
     php spark db:seed DatabaseSeeder
 
 Reset complet BDD :
-    rm writable/techmada.db
+    rm writable/database/techmada_rh.sqlite
     php spark migrate
     php spark db:seed DatabaseSeeder
 
