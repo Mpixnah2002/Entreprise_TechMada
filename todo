@@ -1,332 +1,351 @@
-# TODO LIST — Système RH Interne (CodeIgniter 4)
-
-# 1. Initialisation du projet
-
-* [ok] Créer projet CodeIgniter 4
-* [ok] Configurer `.env`
-* [ok] Configurer connexion base de données
-* [ ] Tester serveur :
-
-```bash
-php spark serve
-```
-
----
-
-# 2. Création de la base de données
-
-# Migrations
-
-* [ ] Créer migration `departements`
-* [ ] Créer migration `types_conge`
-* [ ] Créer migration `users`
-* [ ] Créer migration `soldes`
-* [ ] Créer migration `demandes_conge`
-
----
-
-# Relations / Foreign Keys
-
-* [ ] `users.departement_id -> departements.id`
-* [ ] `soldes.user_id -> users.id`
-* [ ] `soldes.type_conge_id -> types_conge.id`
-* [ ] `demandes_conge.user_id -> users.id`
-* [ ] `demandes_conge.type_conge_id -> types_conge.id`
-
----
-
-# Exécution migrations
-
-* [ ] Tester :
-
-```bash
-php spark migrate
-```
-
----
-
-# 3. Seeder
-
-* [ ] Créer admin par défaut
-* [ ] Créer 1 RH
-* [ ] Créer 2 employés
-* [ ] Créer départements
-* [ ] Créer 3 types de congé
-* [ ] Initialiser soldes employés
-
----
-
-# Test seeder
-
-* [ ] Tester :
-
-```bash
-php spark db:seed DatabaseSeeder
-```
-
----
-
-# 4. Models
-
-* [ ] `UserModel`
-* [ ] `DepartementModel`
-* [ ] `TypeCongeModel`
-* [ ] `SoldeModel`
-* [ ] `DemandeCongeModel`
-
----
-
-# 5. Authentification
-
-# Login
-
-* [ ] Créer formulaire login
-* [ ] Vérifier email
-* [ ] Vérifier mot de passe avec `password_verify`
-* [ ] Créer session utilisateur
-* [ ] Redirection selon rôle
-
----
-
-# Logout
-
-* [ ] Détruire session
-* [ ] Retour page login
-
----
-
-# Sécurité
-
-* [ ] Utiliser `password_hash`
-* [ ] Activer CSRF
-* [ ] Ajouter `csrf_field()` dans formulaires
-
----
-
-# 6. Filters & routes protégées
-
-* [ ] Créer `AuthFilter`
-* [ ] Bloquer accès sans connexion
-* [ ] Bloquer accès mauvais rôle
-
----
-
-# Routes
-
-* [ ] Routes employé
-* [ ] Routes RH
-* [ ] Routes admin
-
----
-
-# Test sécurité
-
-* [ ] Employé ne peut pas accéder `/admin`
-* [ ] RH ne peut pas accéder admin
-* [ ] Utilisateur non connecté bloqué
-
----
-
-# 7. Layout partagé
-
-* [ ] Créer layout principal
-* [ ] Navbar commune
-* [ ] Sidebar selon rôle
-* [ ] Messages flashdata
-
----
-
-# 8. Fonctionnalités Employé
-
-# Demande congé
-
-* [ ] Formulaire demande
-* [ ] Choix type congé
-* [ ] Date début
-* [ ] Date fin
-* [ ] Motif
-
----
-
-# Validations
-
-* [ ] Vérifier champs obligatoires
-* [ ] Vérifier date début < date fin
-* [ ] Vérifier jours ouvrables > 0
-* [ ] Vérifier solde suffisant
-* [ ] Vérifier chevauchement
-
----
-
-# Calcul jours
-
-* [ ] Exclure samedi
-* [ ] Exclure dimanche
-* [ ] Calculer `nb_jours`
-
----
-
-# Historique
-
-* [ ] Voir ses demandes
-* [ ] Voir statut :
-
-  * en attente
-  * approuvé
-  * refusé
-  * annulé
-
----
-
-# Solde
-
-* [ ] Afficher solde restant par type
-
----
-
-# Annulation
-
-* [ ] Autoriser seulement si `en_attente`
-
----
-
-# 9. Fonctionnalités RH
-
-# Gestion demandes
-
-* [ ] Voir demandes en attente
-* [ ] Filtrer par département
-* [ ] Filtrer par statut
-
----
-
-# Validation RH
-
-* [ ] Bouton approuver
-* [ ] Bouton refuser
-* [ ] Commentaire optionnel
-
----
-
-# Mise à jour solde
-
-* [ ] Déduire automatiquement jours
-* [ ] Empêcher double validation
-* [ ] Utiliser transaction SQL
-
----
-
-# 10. Fonctionnalités Admin
-
-# CRUD employés
-
-* [ ] Ajouter employé
-* [ ] Modifier employé
-* [ ] Désactiver employé
-
----
-
-# CRUD départements
-
-* [ ] Ajouter
-* [ ] Modifier
-* [ ] Supprimer/désactiver
-
----
-
-# CRUD types congé
-
-* [ ] Ajouter
-* [ ] Modifier
-* [ ] Supprimer/désactiver
-
----
-
-# Soldes
-
-* [ ] Initialiser soldes
-* [ ] Modifier soldes employés
-
----
-
-# Dashboard
-
-* [ ] Nombre employés
-* [ ] Demandes en attente
-* [ ] Absences du mois
-
----
-
-# 11. Validation & sécurité finale
-
-* [ ] Toutes routes protégées
-* [ ] Toutes actions vérifiées côté serveur
-* [ ] Aucun SQL brut
-* [ ] Query Builder uniquement
-* [ ] Aucun mot de passe en clair
-* [ ] Vérifier permissions utilisateur
-
----
-
-# 12. UX minimale
-
-* [ ] Messages succès
-* [ ] Messages erreur
-* [ ] Redirections propres (PRG)
-
----
-
-# 13. Tests importants
-
-* [ ] Login incorrect
-* [ ] Solde insuffisant
-* [ ] Chevauchement dates
-* [ ] Week-end uniquement
-* [ ] Validation RH
-* [ ] Mise à jour solde
-* [ ] Protection URL directe
-
----
-
-# 14. Finalisation
-
-* [ ] Nettoyer code
-* [ ] Vérifier structure CI4
-* [ ] Ajouter commentaires utiles
-* [ ] Vérifier migrations propres
-* [ ] Vérifier seeder propre
-
----
-
-# 15. README
-
-* [ ] Installation
-* [ ] Configuration DB
-* [ ] Commandes migrate
-* [ ] Commandes seed
-* [ ] Comptes test
-
----
-
-# Comptes test README
-
-## Admin
-
-```text
-email: admin@test.com
-password: admin123
-```
-
-## RH
-
-```text
-email: rh@test.com
-password: rh123
-```
-
-## Employé
-
-```text
-email: employe@test.com
-password: emp123
-```
+# TODO LIST — SYSTÈME RH INTERNE (CODEIGNITER 4)
+# RÉPARTITION : TSIKY (Login + Utilisateur) / ALEXIA (RH + Admin)
+===============================================================================
+
+===============================================================================
+# 1. INITIALISATION DU PROJET (PARTAGÉ)
+===============================================================================
+
+[ok] Créer projet CodeIgniter 4
+[ok] Configurer .env (SQLite)
+[ok] Configurer connexion base de données (Database.php)
+[ ] Tester : php spark serve
+
+===============================================================================
+# 2. MIGRATIONS (PARTAGÉ)
+===============================================================================
+
+[ ] Migration departements
+[ ] Migration types_conge
+[ ] Migration users
+[ ] Migration soldes
+[ ] Migration demandes_conge
+
+# FOREIGN KEYS
+[ ] users.departement_id -> departements.id
+[ ] soldes.user_id -> users.id
+[ ] soldes.type_conge_id -> types_conge.id
+[ ] demandes_conge.user_id -> users.id
+[ ] demandes_conge.type_conge_id -> types_conge.id
+
+# EXECUTION
+[ ] Tester : php spark migrate
+
+===============================================================================
+# 3. MODELS (PARTAGÉ)
+===============================================================================
+
+[ ] UserModel
+[ ] DepartementModel (TOI)
+[ ] TypeCongeModel (TOI)
+[ ] SoldeModel
+[ ] DemandeCongeModel
+
+===============================================================================
+# 4. SEEDER (PARTAGÉ)
+===============================================================================
+
+[ ] Créer admin par défaut
+[ ] Créer 1 RH
+[ ] Créer 2 employés
+[ ] Créer départements
+[ ] Créer 3 types de congé
+[ ] Initialiser soldes employés
+[ ] Tester : php spark db:seed DatabaseSeeder
+
+===============================================================================
+# 5. AUTHENTIFICATION - LOGIN (TSIKY)
+===============================================================================
+
+[ ] Créer formulaire login (view)
+[ ] Vérifier email en base
+[ ] Vérifier mot de passe (password_verify)
+[ ] Créer session utilisateur (id, role, email, nom)
+[ ] Redirection selon rôle (employee/rh/admin)
+[ ] Gestion erreurs (flashdata)
+
+===============================================================================
+# 6. AUTHENTIFICATION - LOGOUT (TSIKY)
+===============================================================================
+
+[ ] Détruire session
+[ ] Retour page login
+
+===============================================================================
+# 7. SÉCURITÉ (PARTAGÉ)
+===============================================================================
+
+[ ] Utiliser password_hash pour tous les passwords
+[ ] Activer CSRF dans .env ou Filters.php
+[ ] Ajouter csrf_field() dans TOUS les formulaires
+
+===============================================================================
+# 8. FILTERS & ROUTES (PARTAGÉ - À COORDONNER)
+===============================================================================
+
+[ ] Créer AuthFilter
+[ ] Bloquer accès sans connexion
+[ ] Bloquer accès mauvais rôle
+[ ] Routes employé (/employee/*)
+[ ] Routes RH (/rh/*)
+[ ] Routes admin (/admin/*)
+
+===============================================================================
+# 9. LAYOUT PARTAGÉ (TSIKY)
+===============================================================================
+
+[ ] Créer layout principal (app.php)
+[ ] Navbar commune
+[ ] Sidebar selon rôle (if role == employee)
+[ ] Messages flashdata (succès/erreur/warning)
+
+===============================================================================
+# 10. FONCTIONNALITÉS EMPLOYÉ (TSIKY - 100%)
+===============================================================================
+
+## 10a. Demande de congé
+[ ] Formulaire demande (view)
+[ ] Charger types de congé depuis BDD
+[ ] Champ date début + date fin
+[ ] Champ motif (optionnel)
+[ ] Afficher solde restant en direct
+[ ] Soumettre (POST -> store())
+
+## 10b. Validations côté serveur
+[ ] Vérifier champs obligatoires
+[ ] Vérifier date début < date fin
+[ ] Vérifier nb jours > 0
+[ ] Vérifier solde suffisant (consulter soldes)
+[ ] Vérifier chevauchement (dates croisées)
+
+## 10c. Calcul des jours ouvrables
+[ ] Exclure samedi
+[ ] Exclure dimanche
+[ ] Calculer nb_jours (date_diff ou boucle)
+[ ] Stocker nb_jours en base
+
+## 10d. Historique des demandes
+[ ] Voir toutes ses demandes
+[ ] Affichage : dates, durée, type, statut
+[ ] Filtrer par statut (optionnel)
+
+## 10e. Annulation
+[ ] Bouton annuler (si en_attente uniquement)
+[ ] Mettre statut -> annulee
+[ ] Flashdata de confirmation
+
+## 10f. Dashboard employé
+[ ] Afficher soldes par type
+[ ] Afficher compteurs : en attente, approuvées, refusées
+[ ] Afficher dernières demandes (3-5)
+
+===============================================================================
+# 11. TESTS UTILISATEUR (TSIKY)
+===============================================================================
+
+[ ] Login incorrect -> message erreur
+[ ] Solde insuffisant -> blocage + flash
+[ ] Chevauchement dates -> blocage
+[ ] Demande weekend uniquement -> 0 jours -> erreur
+[ ] Annulation fonctionnelle
+[ ] Protection URL directe (non connecté)
+
+===============================================================================
+# 12. FONCTIONNALITÉS RH (TOI - 100%)
+===============================================================================
+
+## 12a. Liste des demandes à traiter
+[ ] Voir toutes demandes en_attente
+[ ] Afficher infos : employé, dates, type, nb jours
+[ ] Afficher solde disponible de l'employé
+[ ] Filtrer par département
+[ ] Filtrer par statut
+
+## 12b. Validation / Refus
+[ ] Bouton Approuver -> POST /rh/approuver/:id
+[ ] Bouton Refuser -> POST /rh/refuser/:id
+[ ] Champ commentaire optionnel
+[ ] Vérifier solde > nb_jours avant approbation
+[ ] Mettre à jour statut (approuvee / refusee)
+[ ] Sauvegarder commentaire RH
+[ ] Sauvegarder valide_par = user_id du RH
+
+## 12c. Mise à jour automatique du solde (CRITIQUE)
+[ ] À l'approbation : déduire nb_jours du solde_restant
+[ ] Mettre à jour solde_pris
+[ ] Utiliser transaction SQL (rollback si erreur)
+[ ] Empêcher double validation (vérifier statut avant)
+
+## 12d. Voir soldes des employés (RH)
+[ ] Lister tous les employés
+[ ] Afficher solde restant par type
+[ ] Rechercher/filtrer par département
+
+## 12e. Historique complet (RH)
+[ ] Voir toutes demandes (tous statuts)
+[ ] Filtrer par employé / département / période
+
+## 12f. Dashboard RH
+[ ] Nb demandes en attente
+[ ] Nb approuvées ce mois
+[ ] Nb employés dans son département
+
+===============================================================================
+# 13. FONCTIONNALITÉS ADMIN (TOI - 100%)
+===============================================================================
+
+## 13a. CRUD Employés
+[ ] Ajouter un employé (nom, email, password hash, rôle, département)
+[ ] Modifier un employé
+[ ] Désactiver / Réactiver (actif = 0/1)
+[ ] Supprimer (soft delete ou désactiver)
+[ ] Liste employés + recherche + filtre
+
+## 13b. CRUD Départements
+[ ] Ajouter département
+[ ] Modifier département
+[ ] Désactiver (vérifier employés avant)
+
+## 13c. CRUD Types de congé
+[ ] Ajouter type (libellé, nb_jours_max, couleur)
+[ ] Modifier type
+[ ] Désactiver (vérifier soldes liés)
+
+## 13d. Gestion des soldes (admin)
+[ ] Initialiser soldes pour nouvel employé (tous types)
+[ ] Ajuster solde manuellement (admin)
+[ ] Réinitialiser soldes annuels
+
+## 13e. Dashboard Admin
+[ ] Nombre total employés actifs
+[ ] Demandes en attente
+[ ] Absences du mois (calendrier ou liste)
+[ ] Graphique simple (optionnel)
+
+===============================================================================
+# 14. SÉCURITÉ RH/ADMIN (TOI)
+===============================================================================
+
+[ ] Vérifier rôle = rh avant toute action RH
+[ ] Vérifier rôle = admin avant toute action admin
+[ ] Vérifier que RH ne modifie pas solde "en dur"
+[ ] Vérifier que admin ne modifie pas demande déjà traitée
+[ ] Aucun SQL brut -> Query Builder ONLY
+
+===============================================================================
+# 15. VALIDATION FINALE & SÉCURITÉ (ENSEMBLE)
+===============================================================================
+
+[ ] Toutes routes protégées par AuthFilter
+[ ] Toutes actions vérifiées côté serveur (pas seulement filtre)
+[ ] Aucun JavaScript métier (tout serveur)
+[ ] Pattern PRG partout (POST -> redirect -> GET)
+[ ] Flashdata sur tous les messages
+
+===============================================================================
+# 16. TESTS D'INTÉGRATION (ENSEMBLE)
+===============================================================================
+
+[ ] Login admin -> dashboard admin OK
+[ ] Login RH -> dashboard RH OK
+[ ] Login employé -> dashboard employé OK
+[ ] Employé demande -> RH voit la demande
+[ ] RH approuve -> solde se met à jour
+[ ] RH refuse -> commentaire visible
+[ ] Employé annule -> demande disparaît des RH
+[ ] Admin ajoute employé -> soldes auto-initialisés
+[ ] Admin modifie solde -> employé voit le nouveau solde
+
+===============================================================================
+# 17. README (ENSEMBLE)
+===============================================================================
+
+[ ] Instructions installation CI4
+[ ] Configuration SQLite
+[ ] Commandes : php spark migrate
+[ ] Commande : php spark db:seed DatabaseSeeder
+[ ] Comptes de test (admin, rh, employe)
+
+===============================================================================
+# 18. LIVRABLES (ENSEMBLE)
+===============================================================================
+
+[ ] Code source complet (structure CI4)
+[ ] Fichier SQLite (.db) dans writable/
+[ ] Migrations fonctionnelles
+[ ] Seeder fonctionnel
+[ ] README + TODOLIST à jour
+
+===============================================================================
+# COMPTES DE TEST POUR README
+===============================================================================
+
+ADMIN :
+    Email : admin@techmada.mg
+    Mot de passe : admin123
+
+RH :
+    Email : rh@techmada.mg
+    Mot de passe : rh123
+
+EMPLOYÉ :
+    Email : employe@techmada.mg
+    Mot de passe : emp123
+
+===============================================================================
+# RÉPARTITION RAPIDE
+===============================================================================
+
+TSIKY (Login + Utilisateur) :
+    - Login/logout + session
+    - Layout + sidebar employé
+    - Dashboard employé
+    - Demande de congé (formulaire + validation)
+    - Calcul jours ouvrables
+    - Historique + annulation
+    - Tests utilisateur
+
+TOI (RH + Admin) :
+    - Dashboard RH
+    - Liste demandes en attente
+    - Approuver/refuser + transaction solde
+    - Dashboard admin
+    - CRUD employés
+    - CRUD départements
+    - CRUD types congé
+    - Gestion soldes
+    - Tests RH/Admin
+
+ENSEMBLE :
+    - Migrations + Seeder
+    - Routes + AuthFilter
+    - CSRF + Sécurité
+    - Tests intégration
+    - README + Livrables
+
+===============================================================================
+# COMMANDES UTILES
+===============================================================================
+
+Lancer le serveur :
+    php spark serve
+
+Créer une migration :
+    php spark make:migration NomDeLaMigration
+
+Lancer les migrations :
+    php spark migrate
+
+Créer un seeder :
+    php spark make:seeder DatabaseSeeder
+
+Lancer le seeder :
+    php spark db:seed DatabaseSeeder
+
+Reset complet BDD :
+    rm writable/techmada.db
+    php spark migrate
+    php spark db:seed DatabaseSeeder
+
+Voir les routes :
+    php spark routes
